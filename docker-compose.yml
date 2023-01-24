@@ -1,0 +1,34 @@
+version: "4"
+services:
+# Launch emulator and appium instance
+  android-service:
+    image: amrka/ultimate-android:latest
+    build: .
+    ports:
+      - 4725:4725
+    container_name: android-service
+    environment:
+      - APPIUM_PORT=4725
+    privileged: true
+    command:
+      - bash
+      - -c
+      - './start_emu_headless.sh && ./start_appium.sh'
+    tty: true
+    stdin_open: true
+# Starting VNC server
+  # VNC-Service:
+  #   image: amrka/ultimate-android:latest
+  #   build: .
+  #   ports:
+  #     - 5900:5900
+  #   container_name: VNC-Service
+  #   environment: 
+  #     VNC_PASSWORD: 123
+  #   privileged: true
+  #   command:
+  #     - bash
+  #     - -c
+  #     - './start_vnc.sh'
+  #   tty: true
+  #   stdin_open: true

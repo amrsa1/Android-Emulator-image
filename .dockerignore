@@ -1,0 +1,11 @@
+.github
+README.md
+allure-results
+coverage
+.gitignore
+docker-compose.yml
+Jenkinsfile
+useful
+Dockerfile
+test-compose.yml
+allure_service.sh
