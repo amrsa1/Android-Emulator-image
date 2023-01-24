@@ -2,7 +2,7 @@ version: "4"
 services:
 # Launch emulator and appium instance
   android-service:
-    image: amrka/ultimate-android:latest
+    image: amrka/android-emulator:latest
     build: .
     ports:
       - 4725:4725
@@ -18,7 +18,7 @@ services:
     stdin_open: true
 # Starting VNC server
   # VNC-Service:
-  #   image: amrka/ultimate-android:latest
+  #   image: amrka/android-emulator:latest
   #   build: .
   #   ports:
   #     - 5900:5900
