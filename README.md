@@ -27,7 +27,7 @@ Down below is the list of the main scripts to launch the relevant service, certa
 
         docker exec --privileged -it androidContainer bash -c "appium -p 5900"
 
-        OR
+     OR
 
         docker exec --privileged  -it androidContainer bash -c "./start_appium.sh"
 
@@ -84,8 +84,6 @@ The Docker Compose file simplifies the process of starting the service. It inclu
 | ----------------- | -------------------------------------------------------------------------------------------------------- | ------------ | -----------|
 | APPIUM_PORT       | Port for the appium instance                                                                             | Yes          | Android    |
 | VNC_PASSWORD      | Password needed to connect to VNC Server                                                                 | Yes          | VNC        |
-
-*
 
 
 ## Kill the container
