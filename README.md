@@ -1,7 +1,7 @@
 # Android emulator Image
 
 The use of this Docker image simplifies the process of running an Android emulator within a Docker container. This can be achieved through a few basic commands or by utilizing a simple Docker compose file. The image includes the latest version of the Android SDK, as well as the Appium server, which allows for the execution of mobile automation tests.
-  for more info --> https://medium.com/@Amr.sahttps://medium.com/@Amr.sa
+  for more info --> https://medium.com/@Amr.sa/running-android-emulator-in-a-docker-container-19ecb68e1909
 
 # Feature
 
