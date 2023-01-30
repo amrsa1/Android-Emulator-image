@@ -68,8 +68,7 @@ RUN curl -sL https://deb.nodesource.com/setup_18.x | bash && \
     appium driver install uiautomator2 && \
     exit 0 && \
     npm cache clean && \
-    apt-get install cpu-checker && \
-    apt-get remove --purge -y npm && \
+    apt-get remove --purge -y npm && \  
     apt-get autoremove --purge -y && \
     apt-get clean && \
     rm -Rf /tmp/* && rm -Rf /var/lib/apt/lists/*
