@@ -6,11 +6,10 @@ RED='\033[0;31m'
 YE='\033[1;33m'
 NC='\033[0m' # No Color
 
-emulator_name=${EMULATOR_NAME};
+emulator_name=${EMULATOR_NAME}
 
 function launch_emulator () {
   adb devices | grep emulator | cut -f1 | while read line; do adb -s "$line" emu kill; done
-
   if [ "$OSTYPE" == "macOS" ];
   then
     echo "Running: emulator -avd ${emulator_name} -wipe-data -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -memory 2048 -cache-size 2048 -partition-size 2048 &"
@@ -27,27 +26,25 @@ function launch_emulator () {
 };
 
 function check_emulator_status () {
-
-printf "${G}==> ${BL}Checking device booting up status 🧐.. ${G}<==${NC}""\n"
-while [[ "$(adb shell getprop sys.boot_completed 2>&1)" != 1 ]];
+  printf "${G}==> ${BL}Checking device booting up status 🧐.. ${G}<==${NC}""\n"
+  while [[ "$(adb shell getprop sys.boot_completed 2>&1)" != 1 ]];
   do
-  sleep 2
-  if [ "$(adb shell getprop sys.boot_completed 2>&1)" == 1 ];
-  then
-     printf "${G}☞ ${BL}Device is fully booted and running!! 😀 : '$(adb shell getprop sys.boot_completed 2>&1)' ${G}☜${NC}""\n"
-     adb devices -l
-     adb shell input keyevent 82
-     break
-  else
-     if [ "$(adb shell getprop sys.boot_completed 2>&1)" == "" ];
-     then
-     printf "${G}==> ${YE}Device is partially Booted! 😕 ${G}<==${NC}""\n"
-     else
-     printf  "${G}==> ${RED}$(adb shell getprop sys.boot_completed 2>&1) 😱 ${G}<==${NC}""\n"
-     fi
-  fi
-done
-
+    sleep 2
+    if [ "$(adb shell getprop sys.boot_completed 2>&1)" == 1 ];
+    then
+       printf "${G}☞ ${BL}Device is fully booted and running!! 😀 : '$(adb shell getprop sys.boot_completed 2>&1)' ${G}☜${NC}""\n"
+       adb devices -l
+       adb shell input keyevent 82
+       break
+    else
+       if [ "$(adb shell getprop sys.boot_completed 2>&1)" == "" ];
+       then
+       printf "${G}==> ${YE}Device is partially Booted! 😕 ${G}<==${NC}""\n"
+       else
+       printf  "${G}==> ${RED}$(adb shell getprop sys.boot_completed 2>&1) 😱 ${G}<==${NC}""\n"
+       fi
+    fi
+  done
 };
 
 function disable_animation() {
@@ -69,7 +66,6 @@ function access_emulator_with_adb() {
 };
 
 function check_emulator_focus() {
-
   EMU_BOOTED=0
   n=0
   first_launcher=1
