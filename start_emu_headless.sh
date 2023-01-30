@@ -9,31 +9,34 @@ NC='\033[0m' # No Color
 emulator_name=${EMULATOR_NAME};
 hw_accel_flag="-accel off";
 
-function enable_hardware_acceleration () {
-  apt-get install -y cpu-checker
-  kvm-ok
-  HW_ACCEL_SUPPORT=$(grep -E -c '(vmx|svm)' /proc/cpuinfo)
-  echo "${HW_ACCEL_SUPPORT}"
-  if [[ "${HW_ACCEL_SUPPORT}" == *"NOT"* ]]; then
-    hw_accel_flag="-accel off";
-  else
-    echo "Enabling Hardware Acceleration"
-    hw_accel_flag="-accel on";
-  fi
-};
+#function enable_hardware_acceleration () {
+#  apt-get install -y cpu-checker
+#  kvm-ok
+#  HW_ACCEL_SUPPORT=$(grep -E -c '(vmx|svm)' /proc/cpuinfo)
+#  echo "${HW_ACCEL_SUPPORT}"
+#  if [[ "${HW_ACCEL_SUPPORT}" == *"NOT"* ]]; then
+#    hw_accel_flag="-accel off";
+#  else
+#    echo "Enabling Hardware Acceleration"
+#    hw_accel_flag="-accel on";
+#  fi
+#};
 
 function launch_emulator () {
   adb devices | grep emulator | cut -f1 | while read line; do adb -s "$line" emu kill; done
 
   if [ "$OSTYPE" == "macOS" ];
   then
-  emulator -avd "${emulator_name}" -wipe-data -verbose -no-window -gpu swiftshader_indirect -no-snapshot -noaudio "${hw_accel_flag}" -no-boot-anim -memory 2048 -cache-size 1000 -partition-size 2048 &
+    echo "Running  emulator -avd ${emulator_name} -wipe-data -verbose -no-window -gpu swiftshader_indirect -no-snapshot -noaudio ${hw_accel_flag} -no-boot-anim -memory 2048 -cache-size 1000 -partition-size 2048 &"
+    emulator -avd "${emulator_name}" -wipe-data -verbose -no-window -gpu swiftshader_indirect -no-snapshot -noaudio "${hw_accel_flag}" -no-boot-anim -memory 2048 -cache-size 1000 -partition-size 2048 &
   elif [ "$OSTYPE" == "Linux" ]
   then
-  nohup emulator -avd "${emulator_name}" -wipe-data -verbose -no-boot-anim -no-window -gpu off "${hw_accel_flag}" -no-snapshot -memory 2048 -cache-size 1000 -partition-size 2048 &
+    echo "Running  nohup emulator -avd ${emulator_name} -wipe-data -verbose -no-boot-anim -no-window -gpu off ${hw_accel_flag} -no-snapshot -memory 2048 -cache-size 1000 -partition-size 2048 &"
+    nohup emulator -avd "${emulator_name}" -wipe-data -verbose -no-boot-anim -no-window -gpu off "${hw_accel_flag}" -no-snapshot -memory 2048 -cache-size 1000 -partition-size 2048 &
   elif [ "$OSTYPE" == "linux-gnu" ]
   then
-  nohup emulator -avd "${emulator_name}" -wipe-data -verbose -no-boot-anim -no-window -gpu off -no-snapshot -memory 2048 "${hw_accel_flag}" -cache-size 1000 -partition-size 2048 &
+    echo "Running  nohup emulator -avd ${emulator_name} -wipe-data -verbose -no-boot-anim -no-window -gpu off -no-snapshot -memory 2048 ${hw_accel_flag} -cache-size 1000 -partition-size 2048 &"
+    nohup emulator -avd "${emulator_name}" -wipe-data -verbose -no-boot-anim -no-window -gpu off -no-snapshot -memory 2048 "${hw_accel_flag}" -cache-size 1000 -partition-size 2048 &
   fi
 };
 
@@ -134,8 +137,8 @@ function check_emulator_focus() {
   echo "Android Emulator started."
 };
 
-enable_hardware_acceleration
-sleep 1
+#enable_hardware_acceleration
+#sleep 1
 launch_emulator
 sleep 4
 check_emulator_status
