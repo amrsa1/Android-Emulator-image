@@ -82,32 +82,6 @@ function check_emulator_focus() {
        fi
      ;;
 
-#     *"Not Responding: com.android.systemui"*)
-#       echo "Dismiss System UI isn't responding alert"
-#       adb shell input keyevent KEYCODE_ENTER
-#       adb shell input keyevent KEYCODE_DPAD_DOWN
-#       adb shell input keyevent KEYCODE_ENTER
-#       first_launcher=1
-#     ;;
-
-#     *"Not Responding: com.google.android.gms"*)
-#       echo "Dismiss GMS isn't responding alert"
-#       adb shell input keyevent KEYCODE_ENTER
-#       first_launcher=1
-#     ;;
-
-#     *"Not Responding: system"*)
-#       echo "Dismiss Process system isn't responding alert"
-#       adb shell input keyevent KEYCODE_ENTER
-#       first_launcher=1
-#     ;;
-
-#     *"ConversationListActivity"*)
-#       echo "Close Messaging app"
-#       adb shell input keyevent KEYCODE_ENTER
-#       first_launcher=1
-#     ;;
-
       *)
         adb shell input keyevent KEYCODE_ENTER
         adb shell input keyevent KEYCODE_DPAD_DOWN
