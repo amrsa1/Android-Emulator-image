@@ -12,16 +12,16 @@ function launch_emulator () {
   adb devices | grep emulator | cut -f1 | while read line; do adb -s "$line" emu kill; done
   if [ "$OSTYPE" == "macOS" ];
   then
-    echo "Running: emulator -avd ${emulator_name} -wipe-data -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -memory 2048 -cache-size 2048 -partition-size 2048 &"
-    emulator -avd "${emulator_name}" -wipe-data -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -memory 2048 -cache-size 2048 -partition-size 2048 &
+    echo "Running: emulator -avd ${emulator_name} -wipe-data -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -memory 2048 -cache-size 1000 -partition-size 1024 &"
+    emulator -avd "${emulator_name}" -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -memory 4096 -cache-size 1000 -partition-size 1024 &
   elif [ "$OSTYPE" == "Linux" ]
   then
-    echo "Running: nohup emulator -avd ${emulator_name} -wipe-data -verbose -no-boot-anim -no-window -gpu off -no-accel -no-snapshot-load -memory 2048 -cache-size 2048 -partition-size 2048 &"
-    nohup emulator -avd "${emulator_name}" -wipe-data -verbose -no-boot-anim -no-window -gpu off -no-accel -no-snapshot-load -memory 2048 -cache-size 2048 -partition-size 2048 &
+    echo "Running: nohup emulator -avd ${emulator_name} -wipe-data -verbose -no-boot-anim -no-window -gpu off -no-accel -no-snapshot-load -memory 2048 -cache-size 1000 -partition-size 1024 &"
+    nohup emulator -avd "${emulator_name}" -verbose -no-boot-anim -no-window -gpu off -no-accel -no-snapshot-load -memory 4096 -cache-size 1000 -partition-size 1024 &
   elif [ "$OSTYPE" == "linux-gnu" ]
   then
-    echo "Running: nohup emulator -avd ${emulator_name} -wipe-data -verbose -no-boot-anim -no-window -gpu off -no-snapshot-load -memory 2048 -cache-size 2048 -partition-size 2048 &"
-    nohup emulator -avd "${emulator_name}" -wipe-data -verbose -no-boot-anim -no-window -gpu off -no-snapshot-load -memory 2048 -cache-size 2048 -partition-size 2048 &
+    echo "Running: nohup emulator -avd ${emulator_name} -wipe-data -verbose -no-boot-anim -no-window -gpu off -no-snapshot-load -memory 2048 -cache-size 1000 -partition-size 1024 &"
+    nohup emulator -avd "${emulator_name}" -verbose -no-boot-anim -no-window -gpu off -no-snapshot-load -memory 4096 -cache-size 1000 -partition-size 1024 &
   fi
 };
 
