@@ -10,8 +10,10 @@ emulator_name=${EMULATOR_NAME};
 hw_accel_flag="-accel off";
 
 function enable_hardware_acceleration () {
+  apt-get install -y cpu-checker
   HW_ACCEL_SUPPORT=$(grep -E -c '(vmx|svm)' /proc/cpuinfo)
-  if [[ $HW_ACCEL_SUPPORT == *"NOT"* ]]; then
+  echo "${HW_ACCEL_SUPPORT}"
+  if [[ "${HW_ACCEL_SUPPORT}" == *"NOT"* ]]; then
     hw_accel_flag="-accel off";
   else
     echo "Enabling Hardware Acceleration"
