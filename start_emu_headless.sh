@@ -11,6 +11,7 @@ hw_accel_flag="-accel off";
 
 function enable_hardware_acceleration () {
   apt-get install -y cpu-checker
+  kvm-ok
   HW_ACCEL_SUPPORT=$(grep -E -c '(vmx|svm)' /proc/cpuinfo)
   echo "${HW_ACCEL_SUPPORT}"
   if [[ "${HW_ACCEL_SUPPORT}" == *"NOT"* ]]; then
@@ -19,7 +20,6 @@ function enable_hardware_acceleration () {
     echo "Enabling Hardware Acceleration"
     hw_accel_flag="-accel on";
   fi
-  kvm-ok
 };
 
 function launch_emulator () {
