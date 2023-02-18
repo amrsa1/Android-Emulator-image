@@ -40,7 +40,7 @@ Down below is the list of the main scripts to launch the relevant service, certa
 
 5.  **Starting VNC server:**
 
-        docker exec --privileged -it androidContainer bash -c "./bootstrap.sh"
+        docker exec --privileged -it androidContainer bash -c "./start_vnc.sh"
 
 
 
