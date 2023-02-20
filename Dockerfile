@@ -8,6 +8,8 @@ WORKDIR /
 #=============================
 # Install Dependenices 
 #=============================
+SHELL ["/bin/bash", "-c"]   
+
 RUN apt update && apt install -y curl sudo wget unzip bzip2 libdrm-dev libxkbcommon-dev libgbm-dev libasound-dev libnss3 libxcursor1 libpulse-dev libxshmfence-dev xauth xvfb x11vnc fluxbox wmctrl libdbus-glib-1-2
 
 #==============================
@@ -73,6 +75,16 @@ RUN curl -sL https://deb.nodesource.com/setup_18.x | bash && \
     apt-get clean && \
     rm -Rf /tmp/* && rm -Rf /var/lib/apt/lists/*
 
+
+#===================
+# Alias
+#===================
+ENV START_EMU=./start_emu.sh
+ENV START_EMU_HEADLESS=./start_emu_headless.sh
+ENV START_VNC=./start_vnc.sh
+ENV START_APPIUM=./start_appium.sh
+
+
 #===================
 # Ports
 #===================
@@ -87,7 +99,7 @@ RUN chmod a+x start_vnc.sh && \
     chmod a+x start_emu.sh && \
     chmod a+x start_appium.sh && \
     chmod a+x start_emu_headless.sh
-    
+
 #=======================
 # framework entry point
 #=======================
