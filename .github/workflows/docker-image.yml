@@ -44,7 +44,7 @@ jobs:
         password: ${{secrets.DOCKER_PASSWORD}}
       
     - name: Docker build image
-      run: docker build --build-arg EMULATOR_DEVICE="${{ github.event.inputs.Emulator }}" --build-arg EMULATOR_NAME="${{ github.event.inputs.EmulatorName }}" -t amrka/android-emulator:${{ github.event.inputs.Tag }} .
+      run: docker build --platform windows/amd64 --build-arg EMULATOR_DEVICE="${{ github.event.inputs.Emulator }}" --build-arg EMULATOR_NAME="${{ github.event.inputs.EmulatorName }}" -t amrka/android-emulator:${{ github.event.inputs.Tag }} .
       
     - name: Push docker image
       run:  docker push amrka/android-emulator:${{ github.event.inputs.Tag }}
