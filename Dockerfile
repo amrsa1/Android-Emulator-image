@@ -1,4 +1,4 @@
-FROM openjdk:18-jdk-slim-buster
+FROM openjdk:18-jdk-slim
 
 LABEL maintainer "Amr Salem"
 
