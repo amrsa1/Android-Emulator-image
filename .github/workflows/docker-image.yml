@@ -44,8 +44,8 @@ jobs:
         run: |
           # docker build --build-arg EMULATOR_DEVICE="${EMULATOR_DEVICE}" --build-arg EMULATOR_NAME="${EMULATOR_NAME}" -t amrka/android-emulator:${{ matrix.docker_tag }}-win-latest .
           # docker push amrka/android-emulator:${DOCKER_TAG}-win-latest
-          docker build --build-arg EMULATOR_DEVICE="${EMULATOR_DEVICE}" --build-arg EMULATOR_NAME="${EMULATOR_NAME}" -f DockerfileWin -t amrka/android-emulator:${{ matrix.docker_tag }}}-win-latest .
-          docker push amrka/android-emulator:${{ matrix.docker_tag }}}-win-latest
+          docker build --build-arg EMULATOR_DEVICE="${EMULATOR_DEVICE}" --build-arg EMULATOR_NAME="${EMULATOR_NAME}" -f DockerfileWin -t amrka/android-emulator:${{ matrix.docker_tag }}-win-latest .
+          docker push amrka/android-emulator:${{ matrix.docker_tag }}-win-latest
 
     strategy:
        max-parallel: 2
