@@ -1,14 +1,16 @@
-FROM mcr.microsoft.com/java/jdk:11-windowsservercore-ltsc2019
+FROM --platform=linux/amd64 openjdk:18-jdk-slim
 
 LABEL maintainer "Amr Salem"
 
+ENV DEBIAN_FRONTEND noninteractive
+
 WORKDIR /
 #=============================
-# Install Dependencies 
+# Install Dependenices 
 #=============================
-SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+SHELL ["/bin/bash", "-c"]   
 
-RUN choco install -y curl sudo wget unzip bzip2 libdrm-dev libxkbcommon-dev libgbm-dev libasound-dev libnss3 libxcursor1 libpulse-dev libxshmfence-dev xauth xvfb x11vnc fluxbox wmctrl libdbus-glib-1-2
+RUN apt update && apt install -y curl sudo wget unzip bzip2 libdrm-dev libxkbcommon-dev libgbm-dev libasound-dev libnss3 libxcursor1 libpulse-dev libxshmfence-dev xauth xvfb x11vnc fluxbox wmctrl libdbus-glib-1-2
 
 #==============================
 # Android SDK ARGS
@@ -25,29 +27,29 @@ ARG ANDROID_BUILD_TOOLS_VERSION=$BUILD_TOOLS
 ARG ANDROID_EMULATOR_PACKAGE="system-images;${ANDROID_API_LEVEL};${ANDROID_APIS}"
 ARG ANDROID_PLATFORM_VERSION="platforms;${ANDROID_API_LEVEL}"
 ARG ANDROID_BUILD_TOOLS="build-tools;${ANDROID_BUILD_TOOLS_VERSION}"
-ARG ANDROID_CMD_VERSION="commandlinetools-win-8092744_latest.zip"
+ARG ANDROID_CMD_VERSION="commandlinetools-linux-8092744_latest.zip"
 ARG ANDROID_SDK_PACKAGES="${ANDROID_EMULATOR_PACKAGE} ${ANDROID_PLATFORM_VERSION} ${ANDROID_BUILD_TOOLS} platform-tools"
 
 #==============================
 # Set JAVA_HOME - SDK
 #==============================
-ENV ANDROID_SDK_ROOT=C:\android
-ENV PATH "$PATH;C:\android\cmdline-tools\tools;C:\android\cmdline-tools\tools\bin;C:\android\emulator;C:\android\tools\bin;C:\android\platform-tools;C:\android\build-tools\${ANDROID_BUILD_TOOLS_VERSION}"
+ENV ANDROID_SDK_ROOT=/opt/android
+ENV PATH "$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin:$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/build-tools/${ANDROID_BUILD_TOOLS_VERSION}"
 ENV DOCKER="true"
 
 #============================================
 # Install required Android CMD-line tools
 #============================================
-RUN curl -o /tmp/${ANDROID_CMD_VERSION} https://dl.google.com/android/repository/${ANDROID_CMD_VERSION} && \
-              Expand-Archive /tmp/${ANDROID_CMD_VERSION} -DestinationPath $ANDROID_SDK_ROOT && \
-              mkdir -p $ANDROID_SDK_ROOT\cmdline-tools\tools && cd $ANDROID_SDK_ROOT\cmdline-tools &&  mv NOTICE.txt source.properties bin lib tools\  && \
-              cd $ANDROID_SDK_ROOT\cmdline-tools\tools && dir
+RUN wget https://dl.google.com/android/repository/${ANDROID_CMD_VERSION} -P /tmp && \
+              unzip -d $ANDROID_SDK_ROOT /tmp/$ANDROID_CMD_VERSION && \
+              mkdir -p $ANDROID_SDK_ROOT/cmdline-tools/tools && cd $ANDROID_SDK_ROOT/cmdline-tools &&  mv NOTICE.txt source.properties bin lib tools/  && \
+              cd $ANDROID_SDK_ROOT/cmdline-tools/tools && ls
 
 #============================================
 # Install required package using SDK manager
 #============================================
-RUN echo y | sdkmanager --licenses 
-RUN echo y | sdkmanager --verbose --no_https ${ANDROID_SDK_PACKAGES} 
+RUN yes Y | sdkmanager --licenses 
+RUN yes Y | sdkmanager --verbose --no_https ${ANDROID_SDK_PACKAGES} 
 
 #============================================
 # Create required emulator
@@ -72,6 +74,7 @@ RUN curl -sL https://deb.nodesource.com/setup_18.x | bash && \
     apt-get autoremove --purge -y && \
     apt-get clean && \
     rm -Rf /tmp/* && rm -Rf /var/lib/apt/lists/*
+
 
 #===================
 # Alias
