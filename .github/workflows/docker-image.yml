@@ -65,6 +65,10 @@ jobs:
             emulator_name: pixel_c
             docker_tag: nexus6_playstore
           - os: windows-latest
+            emulator_device: Nexus 6
+            emulator_name: pixel_c
+            docker_tag: pixelC_tablet_playstore  
+          - os: windows-latest
             emulator_device: pixel_c
             emulator_name: nexus
             docker_tag: nexus6_playstore  
@@ -81,6 +85,10 @@ jobs:
             emulator_device: Nexus 6
             emulator_name: nexus
             docker_tag: pixelC_tablet_playstore
+          - os: ubuntu-latest
+            emulator_device: Nexus 6
+            emulator_name: pixel_c
+            docker_tag: pixelC_tablet_playstore  
           - os: ubuntu-latest
             emulator_device: Nexus 6
             emulator_name: pixel_c
