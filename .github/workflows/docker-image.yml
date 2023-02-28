@@ -14,7 +14,7 @@ on:
 
 jobs:
   Pushing-docker-image:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v2
@@ -46,7 +46,7 @@ jobs:
           docker push amrka/android-emulator:${DOCKER_TAG}-win
 
     strategy:
-      matrix:
+       matrix:
         os: [ubuntu-latest, windows-latest]
         emulator_device:
           - pixel_c
@@ -54,7 +54,7 @@ jobs:
         emulator_name:
           - pixel_c
           - nexus
-        docker_tag: ["${{ github.event.inputs.Tag }}"]
+        docker_tag: ["nexus6_playstore", "pixelC_tablet_playstore"]
         include:
           - os: ubuntu-latest
             emulator_device: pixel_c
@@ -72,3 +72,45 @@ jobs:
             emulator_device: Nexus 6
             emulator_name: nexus
             docker_tag: nexus6_playstore
+        # exclude:
+        #   - os: windows-latest
+        #     emulator_device: Nexus 6
+        #     emulator_name: nexus
+        #     docker_tag: pixelC_tablet_playstore
+        #   - os: windows-latest
+        #     emulator_device: Nexus 6
+        #     emulator_name: pixel_c
+        #     docker_tag: nexus6_playstore
+        #   - os: windows-latest
+        #     emulator_device: pixel_c
+        #     emulator_name: nexus
+        #     docker_tag: nexus6_playstore  
+        #   - os: windows-latest
+        #     emulator_device: pixel_c
+        #     emulator_name: nexus
+        #     docker_tag: pixelC_tablet_playstore  
+        #   - os: windows-latest
+        #     emulator_device: pixel_c
+        #     emulator_name: pixel_c
+        #     docker_tag: nexus6_playstore  
+
+        #   - os: ubuntu-latest
+        #     emulator_device: Nexus 6
+        #     emulator_name: nexus
+        #     docker_tag: pixelC_tablet_playstore
+        #   - os: ubuntu-latest
+        #     emulator_device: Nexus 6
+        #     emulator_name: pixel_c
+        #     docker_tag: nexus6_playstore
+        #   - os: ubuntu-latest
+        #     emulator_device: pixel_c
+        #     emulator_name: nexus
+        #     docker_tag: nexus6_playstore  
+        #   - os: ubuntu-latest
+        #     emulator_device: pixel_c
+        #     emulator_name: nexus
+        #     docker_tag: pixelC_tablet_playstore 
+        #   - os: ubuntu-latest
+        #     emulator_device: pixel_c
+        #     emulator_name: pixel_c
+        #     docker_tag: nexus6_playstore 
