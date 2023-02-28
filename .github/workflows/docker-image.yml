@@ -33,7 +33,7 @@ jobs:
           DOCKER_TAG: ${{ matrix.docker_tag }}
         run: |
           docker build --build-arg EMULATOR_DEVICE="${EMULATOR_DEVICE}" --build-arg EMULATOR_NAME="${EMULATOR_NAME}" -t amrka/android-emulator:${DOCKER_TAG}-linux-latest .
-          docker push amrka/android-emulator:${DOCKER_TAG}
+          docker push amrka/android-emulator:${DOCKER_TAG}-linux-latest
 
       - name: Docker build and push image (Windows)
         if: startsWith(matrix.os, 'windows')
@@ -43,9 +43,10 @@ jobs:
           DOCKER_TAG: ${{ matrix.docker_tag }}
         run: |
           docker build --build-arg EMULATOR_DEVICE="${EMULATOR_DEVICE}" --build-arg EMULATOR_NAME="${EMULATOR_NAME}" -f DockerfileWin -t amrka/android-emulator:${DOCKER_TAG}-win-latest .
-          docker push amrka/android-emulator:${DOCKER_TAG}-win
+          docker push amrka/android-emulator:${DOCKER_TAG}-win-latest
 
     strategy:
+       max-parallel: 2
        matrix:
         os: [ubuntu-latest, windows-latest]
         emulator_device:
