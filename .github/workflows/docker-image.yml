@@ -6,45 +6,69 @@ on:
       Tag:
         description: 'Select docker tag to push'     
         required: true
-        default: 'latest' 
+        default: 'nexus6_playstore' 
         type: choice
         options:
-        - latest
-        - nexus6_playstore
-        - pixelC_tablet_playstore
-      Emulator:  
-        description: 'Select Emulator Device'     
-        required: false
-        default: 'pixel_c' 
-        type: choice
-        options:
-        - pixel_c
-        - Nexus 6
-      EmulatorName:  
-        description: 'Select Emulator Name'     
-        required: false
-        default: 'pixel_c' 
-        type: choice
-        options:
-        - pixel_c
-        - nexus
+          - nexus6_playstore
+          - pixelC_tablet_playstore
 
 jobs:
   Pushing-docker-image:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Docker Login
-      uses: docker/login-action@v2.1.0
-      with:
-        username: ${{secrets.DOCKER_USERNAME}}
-        password: ${{secrets.DOCKER_PASSWORD}}
-      
-    - name: Docker build image
-      run: docker build --build-arg EMULATOR_DEVICE="${{ github.event.inputs.Emulator }}" --build-arg EMULATOR_NAME="${{ github.event.inputs.EmulatorName }}" -t amrka/android-emulator:${{ github.event.inputs.Tag }} .
-      
-    - name: Push docker image
-      run:  docker push amrka/android-emulator:${{ github.event.inputs.Tag }}
+      - name: Docker Login
+        uses: docker/login-action@v2.1.0
+        with:
+          username: ${{secrets.DOCKER_USERNAME}}
+          password: ${{secrets.DOCKER_PASSWORD}}
+
+      - name: Docker build and push image
+        if: startsWith(matrix.os, 'ubuntu')
+        env:
+          EMULATOR_DEVICE: ${{ matrix.emulator_device }}
+          EMULATOR_NAME: ${{ matrix.emulator_name }}
+          DOCKER_TAG: ${{ matrix.docker_tag }}
+        run: |
+          docker build --build-arg EMULATOR_DEVICE="${EMULATOR_DEVICE}" --build-arg EMULATOR_NAME="${EMULATOR_NAME}" -t amrka/android-emulator:${DOCKER_TAG}-linux-latest .
+          docker push amrka/android-emulator:${DOCKER_TAG}
+
+      - name: Docker build and push image (Windows)
+        if: startsWith(matrix.os, 'windows')
+        env:
+          EMULATOR_DEVICE: ${{ matrix.emulator_device }}
+          EMULATOR_NAME: ${{ matrix.emulator_name }}
+          DOCKER_TAG: ${{ matrix.docker_tag }}
+        run: |
+          docker build --build-arg EMULATOR_DEVICE="${EMULATOR_DEVICE}" --build-arg EMULATOR_NAME="${EMULATOR_NAME}" -f DockerfileWin -t amrka/android-emulator:${DOCKER_TAG}-win-latest .
+          docker push amrka/android-emulator:${DOCKER_TAG}-win
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        emulator_device:
+          - pixel_c
+          - Nexus 6
+        emulator_name:
+          - pixel_c
+          - nexus
+        docker_tag: ${{ github.event.inputs.Tag }}
+        include:
+          - os: ubuntu-latest
+            emulator_device: pixel_c
+            emulator_name: pixel_c
+            docker_tag: pixelC_tablet_playstore
+          - os: ubuntu-latest
+            emulator_device: Nexus 6
+            emulator_name: nexus
+            docker_tag: nexus6_playstore
+          - os: windows-latest
+            emulator_device: pixel_c
+            emulator_name: pixel_c
+            docker_tag: pixelC_tablet_playstore
+          - os: windows-latest
+            emulator_device: Nexus 6
+            emulator_name: nexus
+            docker_tag: nexus6_playstore

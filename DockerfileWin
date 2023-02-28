@@ -1,0 +1,103 @@
+FROM mcr.microsoft.com/java/jdk:11-windowsservercore-ltsc2019
+
+LABEL maintainer "Amr Salem"
+
+WORKDIR /
+#=============================
+# Install Dependencies 
+#=============================
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+
+RUN choco install -y curl sudo wget unzip bzip2 libdrm-dev libxkbcommon-dev libgbm-dev libasound-dev libnss3 libxcursor1 libpulse-dev libxshmfence-dev xauth xvfb x11vnc fluxbox wmctrl libdbus-glib-1-2
+
+#==============================
+# Android SDK ARGS
+#==============================
+ENV ANDROID_ARCH="x86_64" 
+ENV ANDROID_TARGET="google_apis_playstore"  
+ENV API_LEVEL="33" 
+ENV BUILD_TOOLS="33.0.1"
+ARG ANDROID_ARCH=$ANDROID_ARCH
+ARG ANDROID_TARGET=$ANDROID_TARGET     
+ARG ANDROID_API_LEVEL="android-$API_LEVEL"
+ARG ANDROID_APIS="$ANDROID_TARGET;$ANDROID_ARCH"
+ARG ANDROID_BUILD_TOOLS_VERSION=$BUILD_TOOLS
+ARG ANDROID_EMULATOR_PACKAGE="system-images;${ANDROID_API_LEVEL};${ANDROID_APIS}"
+ARG ANDROID_PLATFORM_VERSION="platforms;${ANDROID_API_LEVEL}"
+ARG ANDROID_BUILD_TOOLS="build-tools;${ANDROID_BUILD_TOOLS_VERSION}"
+ARG ANDROID_CMD_VERSION="commandlinetools-win-8092744_latest.zip"
+ARG ANDROID_SDK_PACKAGES="${ANDROID_EMULATOR_PACKAGE} ${ANDROID_PLATFORM_VERSION} ${ANDROID_BUILD_TOOLS} platform-tools"
+
+#==============================
+# Set JAVA_HOME - SDK
+#==============================
+ENV ANDROID_SDK_ROOT=C:\android
+ENV PATH "$PATH;C:\android\cmdline-tools\tools;C:\android\cmdline-tools\tools\bin;C:\android\emulator;C:\android\tools\bin;C:\android\platform-tools;C:\android\build-tools\${ANDROID_BUILD_TOOLS_VERSION}"
+ENV DOCKER="true"
+
+#============================================
+# Install required Android CMD-line tools
+#============================================
+RUN curl -o /tmp/${ANDROID_CMD_VERSION} https://dl.google.com/android/repository/${ANDROID_CMD_VERSION} && \
+              Expand-Archive /tmp/${ANDROID_CMD_VERSION} -DestinationPath $ANDROID_SDK_ROOT && \
+              mkdir -p $ANDROID_SDK_ROOT\cmdline-tools\tools && cd $ANDROID_SDK_ROOT\cmdline-tools &&  mv NOTICE.txt source.properties bin lib tools\  && \
+              cd $ANDROID_SDK_ROOT\cmdline-tools\tools && dir
+
+#============================================
+# Install required package using SDK manager
+#============================================
+RUN echo y | sdkmanager --licenses 
+RUN echo y | sdkmanager --verbose --no_https ${ANDROID_SDK_PACKAGES} 
+
+#============================================
+# Create required emulator
+#============================================
+ARG EMULATOR_NAME="nexus"
+ARG EMULATOR_DEVICE="Nexus 6"
+ENV EMULATOR_NAME=$EMULATOR_NAME
+ENV EMULATOR_DEVICE_NAME=$EMULATOR_DEVICE
+RUN echo "no" | avdmanager --verbose create avd --force --name "${EMULATOR_NAME}" --device "${EMULATOR_DEVICE}" --package "${ANDROID_EMULATOR_PACKAGE}"
+
+#====================================
+# Install latest nodejs, npm & appium
+#====================================
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash && \
+    apt-get -qqy install nodejs && \
+    npm install -g npm && \
+    npm i -g appium@next --unsafe-perm=true --allow-root && \
+    appium driver install uiautomator2 && \
+    exit 0 && \
+    npm cache clean && \
+    apt-get remove --purge -y npm && \  
+    apt-get autoremove --purge -y && \
+    apt-get clean && \
+    rm -Rf /tmp/* && rm -Rf /var/lib/apt/lists/*
+
+#===================
+# Alias
+#===================
+ENV START_EMU=./start_emu.sh
+ENV START_EMU_HEADLESS=./start_emu_headless.sh
+ENV START_VNC=./start_vnc.sh
+ENV START_APPIUM=./start_appium.sh
+
+
+#===================
+# Ports
+#===================
+ENV APPIUM_PORT=4723
+
+#=========================
+# Copying Scripts to root
+#=========================
+COPY . /
+
+RUN chmod a+x start_vnc.sh && \
+    chmod a+x start_emu.sh && \
+    chmod a+x start_appium.sh && \
+    chmod a+x start_emu_headless.sh
+
+#=======================
+# framework entry point
+#=======================
+CMD [ "/bin/bash" ]
