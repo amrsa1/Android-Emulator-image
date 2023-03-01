@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 openjdk:18-jdk-slim
+FROM openjdk:21-ea-11-jdk-windowsservercore-ltsc2022
 
 LABEL maintainer "Amr Salem"
 
