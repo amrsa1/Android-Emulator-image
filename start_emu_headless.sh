@@ -23,10 +23,10 @@ function launch_emulator () {
   adb devices | grep emulator | cut -f1 | xargs -I {} adb -s "{}" emu kill
   options="-avd ${emulator_name} -no-window -no-snapshot-load -noaudio -no-boot-anim -memory 2048 ${hw_accel_flag}"
   echo "emulator "$options
-  if [ "$OSTYPE" == "macOS" ]; then
-    nohup emulator $options -gpu swiftshader_indirect &
-  elif [ "$OSTYPE" == "Linux" ] || [ "$OSTYPE" == "linux-gnu" ]; then
+  if [[ "$OSTYPE" == *linux* ]]; then
     nohup emulator $options -gpu off &
+  elif [ "$OSTYPE" == *darwin* ] || [ "$OSTYPE" == *macos* ]; then
+    nohup emulator $options -gpu swiftshader_indirect &
   fi
 
   if [ $? -ne 0 ]; then
@@ -40,12 +40,14 @@ function check_emulator_status () {
   start_time=$(date +%s)
   spinner=( "⠹" "⠺" "⠼" "⠶" "⠦" "⠧" "⠇" "⠏" )
   i=0
+  # Get the timeout value from the environment variable or use the default value of 240 seconds (4 minutes)
+  timeout=${EMULATOR_TIMEOUT:-240}
 
   while true; do
     result=$(adb shell getprop sys.boot_completed 2>&1)
 
     if [ "$result" == "1" ]; then
-      printf "           ${G}==> \u2713 Emulator is ready : '$result'           ${NC}\n"
+      printf "\e[K${G}==> \u2713 Emulator is ready : '$result'           ${NC}\n"
       adb devices -l
       adb shell input keyevent 82
       break
@@ -58,13 +60,14 @@ function check_emulator_status () {
 
     current_time=$(date +%s)
     elapsed_time=$((current_time - start_time))
-    if [ $elapsed_time -gt 240 ]; then
-      printf "${RED}==> Timeout after 3 minutes elapsed 🕛.. ${NC}\n"
+    if [ $elapsed_time -gt $timeout ]; then
+      printf "${RED}==> Timeout after ${timeout} seconds elapsed 🕛.. ${NC}\n"
       break
     fi
     sleep 0.2
   done
 };
+
 
 function disable_animation() {
   adb shell "settings put global window_animation_scale 0.0"

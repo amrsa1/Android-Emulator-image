@@ -15,33 +15,31 @@ RUN apt update && apt install -y curl sudo wget unzip bzip2 libdrm-dev libxkbcom
 #==============================
 # Android SDK ARGS
 #==============================
-ENV ANDROID_ARCH="x86_64" 
-ENV ANDROID_TARGET="google_apis_playstore"  
-ENV API_LEVEL="33" 
-ENV BUILD_TOOLS="33.0.1"
-ARG ANDROID_ARCH=$ANDROID_ARCH
-ARG ANDROID_TARGET=$ANDROID_TARGET     
-ARG ANDROID_API_LEVEL="android-$API_LEVEL"
-ARG ANDROID_APIS="$ANDROID_TARGET;$ANDROID_ARCH"
-ARG ANDROID_BUILD_TOOLS_VERSION=$BUILD_TOOLS
-ARG ANDROID_EMULATOR_PACKAGE="system-images;${ANDROID_API_LEVEL};${ANDROID_APIS}"
-ARG ANDROID_PLATFORM_VERSION="platforms;${ANDROID_API_LEVEL}"
-ARG ANDROID_BUILD_TOOLS="build-tools;${ANDROID_BUILD_TOOLS_VERSION}"
-ARG ANDROID_CMD_VERSION="commandlinetools-linux-8092744_latest.zip"
-ARG ANDROID_SDK_PACKAGES="${ANDROID_EMULATOR_PACKAGE} ${ANDROID_PLATFORM_VERSION} ${ANDROID_BUILD_TOOLS} platform-tools"
+ARG ARCH="x86_64" 
+ARG TARGET="google_apis_playstore"  
+ARG API_LEVEL="33" 
+ARG BUILD_TOOLS="33.0.2"
+ARG ANDROID_ARCH=${ANDROID_ARCH_DEFAULT}
+ARG ANDROID_API_LEVEL="android-${API_LEVEL}"
+ARG ANDROID_APIS="${TARGET};${ARCH}"
+ARG EMULATOR_PACKAGE="system-images;${ANDROID_API_LEVEL};${ANDROID_APIS}"
+ARG PLATFORM_VERSION="platforms;${ANDROID_API_LEVEL}"
+ARG BUILD_TOOL="build-tools;${BUILD_TOOLS}"
+ARG ANDROID_CMD="commandlinetools-linux-8092744_latest.zip"
+ARG ANDROID_SDK_PACKAGES="${EMULATOR_PACKAGE} ${PLATFORM_VERSION} ${BUILD_TOOL} platform-tools"
 
 #==============================
 # Set JAVA_HOME - SDK
 #==============================
 ENV ANDROID_SDK_ROOT=/opt/android
-ENV PATH "$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin:$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/build-tools/${ANDROID_BUILD_TOOLS_VERSION}"
+ENV PATH "$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin:$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/build-tools/${BUILD_TOOLS}"
 ENV DOCKER="true"
 
 #============================================
 # Install required Android CMD-line tools
 #============================================
-RUN wget https://dl.google.com/android/repository/${ANDROID_CMD_VERSION} -P /tmp && \
-              unzip -d $ANDROID_SDK_ROOT /tmp/$ANDROID_CMD_VERSION && \
+RUN wget https://dl.google.com/android/repository/${ANDROID_CMD} -P /tmp && \
+              unzip -d $ANDROID_SDK_ROOT /tmp/$ANDROID_CMD && \
               mkdir -p $ANDROID_SDK_ROOT/cmdline-tools/tools && cd $ANDROID_SDK_ROOT/cmdline-tools &&  mv NOTICE.txt source.properties bin lib tools/  && \
               cd $ANDROID_SDK_ROOT/cmdline-tools/tools && ls
 
@@ -57,8 +55,8 @@ RUN yes Y | sdkmanager --verbose --no_https ${ANDROID_SDK_PACKAGES}
 ARG EMULATOR_NAME="nexus"
 ARG EMULATOR_DEVICE="Nexus 6"
 ENV EMULATOR_NAME=$EMULATOR_NAME
-ENV EMULATOR_DEVICE_NAME=$EMULATOR_DEVICE
-RUN echo "no" | avdmanager --verbose create avd --force --name "${EMULATOR_NAME}" --device "${EMULATOR_DEVICE}" --package "${ANDROID_EMULATOR_PACKAGE}"
+ENV DEVICE_NAME=$EMULATOR_DEVICE
+RUN echo "no" | avdmanager --verbose create avd --force --name "${EMULATOR_NAME}" --device "${EMULATOR_DEVICE}" --package "${EMULATOR_PACKAGE}"
 
 #====================================
 # Install latest nodejs, npm & appium
@@ -79,10 +77,10 @@ RUN curl -sL https://deb.nodesource.com/setup_18.x | bash && \
 #===================
 # Alias
 #===================
-ENV START_EMU=./start_emu.sh
-ENV START_EMU_HEADLESS=./start_emu_headless.sh
-ENV START_VNC=./start_vnc.sh
-ENV START_APPIUM=./start_appium.sh
+ENV EMU=./start_emu.sh
+ENV EMU_HEADLESS=./start_emu_headless.sh
+ENV VNC=./start_vnc.sh
+ENV APPIUM=./start_appium.sh
 
 
 #===================

@@ -2,15 +2,6 @@ name: docker push
 
 on:
   workflow_dispatch:
-    inputs:
-      Tag:
-        description: 'Select docker tag to push'     
-        required: true
-        default: 'nexus6_playstore' 
-        type: choice
-        options:
-          - nexus6_playstore
-          - pixelC_tablet_playstore
 
 jobs:
   Pushing-docker-image:
@@ -25,25 +16,25 @@ jobs:
           username: ${{secrets.DOCKER_USERNAME}}
           password: ${{secrets.DOCKER_PASSWORD}}
 
-      # - name: Docker build and push image
-      #   if: startsWith(matrix.os, 'ubuntu')
-      #   env:
-      #     EMULATOR_DEVICE: ${{ matrix.emulator_device }}
-      #     EMULATOR_NAME: ${{ matrix.emulator_name }}
-      #     DOCKER_TAG: ${{ matrix.docker_tag }}
-      #   run: |
-      #     docker build --build-arg EMULATOR_DEVICE="${EMULATOR_DEVICE}" --build-arg EMULATOR_NAME="${EMULATOR_NAME}" -t amrka/android-emulator:${DOCKER_TAG}-linux-latest .
-      #     docker push amrka/android-emulator:${DOCKER_TAG}-linux-latest
-
-      - name: Docker build and push image (Windows)
-        if: startsWith(matrix.os, 'windows')
+      - name: Docker build and push image
+        if: startsWith(matrix.os, 'ubuntu')
         env:
           EMULATOR_DEVICE: ${{ matrix.emulator_device }}
           EMULATOR_NAME: ${{ matrix.emulator_name }}
           DOCKER_TAG: ${{ matrix.docker_tag }}
         run: |
-          docker build --build-arg EMULATOR_DEVICE="${EMULATOR_DEVICE}" --build-arg EMULATOR_NAME="${EMULATOR_NAME}" -f DockerfileWin -t amrka/android-emulator:${{ matrix.docker_tag }}-win-latest .
-          docker push amrka/android-emulator:${{ matrix.docker_tag }}-win-latest
+          docker build --build-arg EMULATOR_DEVICE="${EMULATOR_DEVICE}" --build-arg EMULATOR_NAME="${EMULATOR_NAME}" -t amrka/android-emulator:${DOCKER_TAG}-linux-latest .
+          docker push amrka/android-emulator:${DOCKER_TAG}-linux-latest
+
+      # - name: Docker build and push image (Windows)
+      #   if: startsWith(matrix.os, 'windows')
+      #   env:
+      #     EMULATOR_DEVICE: ${{ matrix.emulator_device }}
+      #     EMULATOR_NAME: ${{ matrix.emulator_name }}
+      #     DOCKER_TAG: ${{ matrix.docker_tag }}
+      #   run: |
+      #     docker build --build-arg EMULATOR_DEVICE="${EMULATOR_DEVICE}" --build-arg EMULATOR_NAME="${EMULATOR_NAME}" -f DockerfileWin -t amrka/android-emulator:${{ matrix.docker_tag }}-win-latest .
+      #     docker push amrka/android-emulator:${{ matrix.docker_tag }}-win-latest
 
     strategy:
        max-parallel: 2

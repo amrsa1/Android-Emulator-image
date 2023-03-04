@@ -19,10 +19,21 @@ Down below is the list of the main scripts to launch the relevant service, certa
 1.  **build the docker image :** 
 
         docker build android-emulator .
+
+    OR for customized image
+
+        docker build \
+        --build-arg ARCH=x86_64  \
+        --build-arg TARGET=google_apis_playstore\
+        --build-arg API_LEVEL=31 \
+        --build-arg BUILD_TOOLS=31.0.0 \
+        --build-arg EMULATOR_DEVICE="Nexus 6" \
+        --build-arg EMULATOR_NAME=nexus \
+        -t my-android-image .  
     
 2.  **Start your container:**
 
-        docker run -it -d -p 5900:5900 --name androidContainer --privileged android-emulator  
+        docker run -it --privileged -d -p 5900:5900 --name androidContainer --privileged android-emulator  
 
 3.  **Launch the appium session :**
 
@@ -34,9 +45,8 @@ Down below is the list of the main scripts to launch the relevant service, certa
 
  
 4.  **Start the emulator in headless mode :**
-
-        docker exec --privileged -it androidContainer bash -c "./start_emu_headless.sh"
-
+   
+        docker exec --privileged -it -e EMULATOR_TIMEOUT=300 androidContainer bash -c "./start_emu_headless.sh"
 
 5.  **Starting VNC server:**
 
@@ -81,10 +91,12 @@ The Docker Compose file simplifies the process of starting the service. It inclu
 
 **When manually starting the container, ensure to set the necessary environment variables for proper operation** 
 
-| Environments      | Description                                                                                              | Required     |  Service   |
-| ----------------- | -------------------------------------------------------------------------------------------------------- | ------------ | -----------|
-| APPIUM_PORT       | Port for the appium instance                                                                             | Yes          | Android    |
-| VNC_PASSWORD      | Password needed to connect to VNC Server                                                                 | Yes          | VNC        |
+| Environments      | Description                                                                                              | Required          |  Service   |
+| ----------------- | -------------------------------------------------------------------------------------------------------- | ----------------- | -----------|
+| APPIUM_PORT       | Port for the appium instance                                                                             | optional          | Android    |
+| VNC_PASSWORD      | Password needed to connect to VNC Server                                                                 | optional          | VNC        |
+| OSTYPE            | linux or macos/darwin                                                                                    | optional          | Android    |
+| EMULATOR_TIMEOUT  | emulator booting up timeoue, default 240 second                                                          | optional          | Android    |
 
 
 ## Kill the container
