@@ -11,7 +11,7 @@ main() {
     launch_xvfb
     launch_window_manager
     run_vnc_server
-    printf "${G}==> ${BL}Welcome to Ultimate-android VNC ${G}<==${NC}""\n"
+    printf "${G}==> ${BL}Welcome to android-emulator VNC by amrsa ${G}<==${NC}""\n"
 }
 
 launch_xvfb() {
