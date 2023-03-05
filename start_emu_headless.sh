@@ -9,7 +9,14 @@ NC='\033[0m' # No Color
 emulator_name=${EMULATOR_NAME}
 
 function check_hardware_acceleration() {
-    HW_ACCEL_SUPPORT=$(grep -E -c '(vmx|svm)' /proc/cpuinfo)
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS-specific hardware acceleration check
+        HW_ACCEL_SUPPORT=$(sysctl -a | grep -E -c '(vmx|svm)')
+    else
+        # generic Linux hardware acceleration check
+        HW_ACCEL_SUPPORT=$(grep -E -c '(vmx|svm)' /proc/cpuinfo)
+    fi
+
     if [[ $HW_ACCEL_SUPPORT == 0 ]]; then
         echo "-accel off"
     else
@@ -21,11 +28,14 @@ hw_accel_flag=$(check_hardware_acceleration)
 
 function launch_emulator () {
   adb devices | grep emulator | cut -f1 | xargs -I {} adb -s "{}" emu kill
-  options="-avd ${emulator_name} -no-window -no-snapshot-load -noaudio -no-boot-anim -memory 2048 ${hw_accel_flag}"
-  echo "emulator "$options
+  options="@${emulator_name} -no-window -no-snapshot -noaudio -no-boot-anim -memory 2048 ${hw_accel_flag} -camera-back none"
   if [[ "$OSTYPE" == *linux* ]]; then
+    echo "${OSTYPE}: emulator ${options} -gpu off"
     nohup emulator $options -gpu off &
-  elif [ "$OSTYPE" == *darwin* ] || [ "$OSTYPE" == *macos* ]; then
+  fi
+  if [[ "$OSTYPE" == *darwin* ]] || [[ "$OSTYPE" == *macos* ]]; then
+    echo "im here"
+    echo "${OSTYPE}: emulator ${options} -gpu swiftshader_indirect"
     nohup emulator $options -gpu swiftshader_indirect &
   fi
 
@@ -40,8 +50,8 @@ function check_emulator_status () {
   start_time=$(date +%s)
   spinner=( "⠹" "⠺" "⠼" "⠶" "⠦" "⠧" "⠇" "⠏" )
   i=0
-  # Get the timeout value from the environment variable or use the default value of 240 seconds (4 minutes)
-  timeout=${EMULATOR_TIMEOUT:-240}
+  # Get the timeout value from the environment variable or use the default value of 300 seconds (5 minutes)
+  timeout=${EMULATOR_TIMEOUT:-300}
 
   while true; do
     result=$(adb shell getprop sys.boot_completed 2>&1)
@@ -64,7 +74,7 @@ function check_emulator_status () {
       printf "${RED}==> Timeout after ${timeout} seconds elapsed 🕛.. ${NC}\n"
       break
     fi
-    sleep 0.2
+    sleep 4
   done
 };
 
