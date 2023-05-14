@@ -19,7 +19,7 @@ jobs:
       - name: Docker build and push image
         if: startsWith(matrix.os, 'ubuntu')
         env:
-          ARCH: x86
+          ARCH: x86_64
           EMULATOR_DEVICE: ${{ matrix.emulator_device }}
           EMULATOR_NAME: ${{ matrix.emulator_name }}
           DOCKER_TAG: ${{ matrix.docker_tag }}
