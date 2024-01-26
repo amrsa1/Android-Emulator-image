@@ -17,15 +17,15 @@ RUN apt update && apt install -y curl sudo wget unzip bzip2 libdrm-dev libxkbcom
 #==============================
 ARG ARCH="x86_64" 
 ARG TARGET="google_apis_playstore"  
-ARG API_LEVEL="33" 
-ARG BUILD_TOOLS="33.0.2"
+ARG API_LEVEL="34" 
+ARG BUILD_TOOLS="34.0.0"
 ARG ANDROID_ARCH=${ANDROID_ARCH_DEFAULT}
 ARG ANDROID_API_LEVEL="android-${API_LEVEL}"
 ARG ANDROID_APIS="${TARGET};${ARCH}"
 ARG EMULATOR_PACKAGE="system-images;${ANDROID_API_LEVEL};${ANDROID_APIS}"
 ARG PLATFORM_VERSION="platforms;${ANDROID_API_LEVEL}"
 ARG BUILD_TOOL="build-tools;${BUILD_TOOLS}"
-ARG ANDROID_CMD="commandlinetools-linux-8092744_latest.zip"
+ARG ANDROID_CMD="commandlinetools-linux-11076708_latest.zip"
 ARG ANDROID_SDK_PACKAGES="${EMULATOR_PACKAGE} ${PLATFORM_VERSION} ${BUILD_TOOL} platform-tools"
 
 #==============================
@@ -61,10 +61,10 @@ RUN echo "no" | avdmanager --verbose create avd --force --name "${EMULATOR_NAME}
 #====================================
 # Install latest nodejs, npm & appium
 #====================================
-RUN curl -sL https://deb.nodesource.com/setup_18.x | bash && \
+RUN curl -sL https://deb.nodesource.com/setup_20.x | bash && \
     apt-get -qqy install nodejs && \
     npm install -g npm && \
-    npm i -g appium@next --unsafe-perm=true --allow-root && \
+    npm i -g appiumt --unsafe-perm=true --allow-root && \
     appium driver install uiautomator2 && \
     exit 0 && \
     npm cache clean && \
