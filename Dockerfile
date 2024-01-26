@@ -64,7 +64,7 @@ RUN echo "no" | avdmanager --verbose create avd --force --name "${EMULATOR_NAME}
 RUN curl -sL https://deb.nodesource.com/setup_20.x | bash && \
     apt-get -qqy install nodejs && \
     npm install -g npm && \
-    npm i -g appiumt --unsafe-perm=true --allow-root && \
+    npm i -g appium --unsafe-perm=true --allow-root && \
     appium driver install uiautomator2 && \
     exit 0 && \
     npm cache clean && \
