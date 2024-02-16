@@ -18,7 +18,7 @@ Down below is the list of the main scripts to launch the relevant service, certa
 
 1.  **build the docker image :** 
 
-        docker build android-emulator .
+        docker build -t android-emulator .
 
     OR for customized image
 
