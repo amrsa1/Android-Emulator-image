@@ -1,4 +1,4 @@
-FROM openjdk:18-jdk-slim
+FROM amd64/openjdk:18-jdk-slim
 
 LABEL maintainer "Amr Salem"
 
@@ -26,12 +26,12 @@ ARG EMULATOR_PACKAGE="system-images;${ANDROID_API_LEVEL};${ANDROID_APIS}"
 ARG PLATFORM_VERSION="platforms;${ANDROID_API_LEVEL}"
 ARG BUILD_TOOL="build-tools;${BUILD_TOOLS}"
 ARG ANDROID_CMD="commandlinetools-linux-11076708_latest.zip"
-ARG ANDROID_SDK_PACKAGES="${EMULATOR_PACKAGE} ${PLATFORM_VERSION} ${BUILD_TOOL} platform-tools"
+ARG ANDROID_SDK_PACKAGES="${EMULATOR_PACKAGE} ${PLATFORM_VERSION} ${BUILD_TOOL} platform-tools emulator"
 
 #==============================
 # Set JAVA_HOME - SDK
 #==============================
-ENV ANDROID_SDK_ROOT=/opt/android
+ENV ANDROID_SDK_ROOT=/opt/android-studio
 ENV PATH "$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin:$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/build-tools/${BUILD_TOOLS}"
 ENV DOCKER="true"
 
