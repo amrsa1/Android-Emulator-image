@@ -1,6 +1,5 @@
-version: "4"
 services:
-# Launch emulator and appium instance
+  # Start the recommended default for the current architecture.
   android-service:
     image: android-emulator
     build: .
@@ -13,8 +12,8 @@ services:
     command:
       - bash
       - -c
-      - | 
-         ./start_emu_headless.sh
+      - |
+        ./start_android.sh
     tty: true
     stdin_open: true
 # # Starting VNC server
